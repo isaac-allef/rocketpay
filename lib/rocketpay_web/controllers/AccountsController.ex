@@ -23,18 +23,10 @@ defmodule RocketpayWeb.AccountsController do
   end
 
   def transaction(conn, params) do
-    task = Task.async(fn -> Rocketpay.transaction(params) end)
-    IO.puts("other task 1")
-    IO.puts("other task 2")
-    IO.puts("other task 3")
-    IO.puts("other task 4")
-    IO.puts("other task 5")
-    IO.puts("other task 6")
+    Task.start(fn -> Rocketpay.transaction(params) end)
 
-    with {:ok, %TransactionResponse{} = transaction} <- Task.await(task) do
-      conn
-      |> put_status(:ok)
-      |> render("transaction.json", transaction: transaction)
-    end
+    conn
+      |> put_status(:no_content)
+      |> text("")
   end
 end
